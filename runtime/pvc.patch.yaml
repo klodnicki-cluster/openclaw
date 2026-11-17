@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openclaw-home-pvc
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+    btrfs.csi.local/cow: "false"
+    btrfs.csi.local/compression: "none"
+spec:
+  storageClassName: hot-retain

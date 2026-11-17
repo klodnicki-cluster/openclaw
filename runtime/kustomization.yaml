@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: openclaw
+resources:
+  - github.com/openclaw/openclaw//scripts/k8s/manifests?ref=v2026.11.5&timeout=180s
+images:
+  - name: ghcr.io/openclaw/openclaw
+    newTag: 2026.11.5-slim@sha256:9c74476e3e79b5a1595fd5cf904286eaba3471c10c640aaa9a361a89b41d0882
+configMapGenerator:
+  - name: openclaw-config-git
+    files:
+      - openclaw.json=config/openclaw.json
+      - AGENTS.md=config/AGENTS.md
+  - name: openclaw-bootstrap
+    files:
+      - bootstrap.mjs
+      - plugin.json
+patches:
+  - path: deployment.patch.yaml
+  - path: pvc.patch.yaml
+  - path: configmap.patch.yaml

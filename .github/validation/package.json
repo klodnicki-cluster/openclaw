@@ -1,0 +1,10 @@
+{
+  "name": "openclaw-deployment-validation",
+  "private": true,
+  "dependencies": {
+    "renovate": "44.251.0"
+  },
+  "allowScripts": {
+    "re2": true
+  }
+}

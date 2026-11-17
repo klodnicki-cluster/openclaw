@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openclaw-runtime
+  namespace: infra-argocd
+  # No resources-finalizer: deleting the bootstrap must not cascade into state.
+spec:
+  project: default
+  source:
+    repoURL: {{ .Values.runtime.repoURL | quote }}
+    targetRevision: {{ .Values.runtime.targetRevision | quote }}
+    path: {{ .Values.runtime.path | quote }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openclaw
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

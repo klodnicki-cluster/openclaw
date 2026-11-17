@@ -1,0 +1,60 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["kustomize", "github-actions", "pip_requirements", "npm", "custom.regex"],
+  "minimumReleaseAge": "3 days",
+  "prCreation": "immediate",
+  "platformAutomerge": true,
+  "automergeType": "pr",
+  "ignoreTests": false,
+  "rebaseWhen": "behind-base-branch",
+  "pinDigests": true,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^runtime/plugin\\.json$/"],
+      "matchStrings": ["\"name\":\\s*\"(?<depName>@openclaw/slack)\",\\s*\"version\":\\s*\"(?<currentValue>[^\"]+)\""],
+      "datasourceTemplate": "npm",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.github/tools\\.env$/"],
+      "matchStrings": ["# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+[A-Z_]+_VERSION=(?<currentValue>[^\\s]+)"],
+      "versioningTemplate": "semver"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Only checked non-major changes may automerge",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "The base, runtime and Slack plugin must pass compatibility together",
+      "matchPackageNames": ["openclaw/openclaw", "ghcr.io/openclaw/openclaw", "@openclaw/slack"],
+      "groupName": "OpenClaw release",
+      "groupSlug": "openclaw-release"
+    },
+    {
+      "matchPackageNames": ["openclaw/openclaw", "@openclaw/slack"],
+      "versioning": "regex:^v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<build>\\d+))?$"
+    },
+    {
+      "matchPackageNames": ["ghcr.io/openclaw/openclaw"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<build>\\d+))?-(?<compatibility>slim)$"
+    },
+    {
+      "matchPackageNames": ["helm/helm", "yannh/kubeconform", "argoproj/argo-cd", "kubernetes/kubernetes"],
+      "extractVersion": "^v(?<version>.*)$"
+    },
+    {
+      "matchPackageNames": ["kubernetes-sigs/kustomize"],
+      "extractVersion": "^kustomize/v(?<version>.*)$"
+    }
+  ]
+}

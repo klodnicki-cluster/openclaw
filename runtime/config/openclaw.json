@@ -1,0 +1,99 @@
+{
+  "gateway": {
+    "mode": "local",
+    "bind": "loopback",
+    "port": 18789,
+    "auth": { "mode": "token" },
+    "controlUi": { "enabled": true }
+  },
+  "agents": {
+    "defaults": {
+      "workspace": "~/.openclaw/workspace",
+      "model": "openrouter/anthropic/claude-sonnet-4.6",
+      "utilityModel": "openrouter/google/gemini-2.5-flash",
+      "modelPolicy": {
+        "allow": [
+          "openrouter/anthropic/claude-sonnet-4.6",
+          "openrouter/google/gemini-2.5-flash"
+        ]
+      },
+      "models": {
+        "openrouter/anthropic/claude-sonnet-4.6": {},
+        "openrouter/google/gemini-2.5-flash": {}
+      }
+    },
+    "entries": {
+      "default": {
+        "name": "OpenClaw",
+        "workspace": "~/.openclaw/workspace"
+      }
+    }
+  },
+  "session": { "dmScope": "per-channel-peer" },
+  "channels": {
+    "slack": {
+      "enabled": true,
+      "mode": "socket",
+      "dmPolicy": "open",
+      "allowFrom": ["*"],
+      "dm": { "enabled": true, "groupEnabled": false },
+      "groupPolicy": "open",
+      "allowBots": false,
+      "joinIntro": false,
+      "requireMentionInBotThreads": true,
+      "implicitMentions": {
+        "replyToBot": false,
+        "threadParticipation": false
+      },
+      "channels": { "*": { "requireMention": true, "allowBots": false } },
+      "configWrites": false,
+      "actions": {
+        "messages": true,
+        "channels": false,
+        "pins": false,
+        "reactions": true,
+        "memberInfo": false,
+        "emojiList": false
+      }
+    }
+  },
+  "plugins": {
+    "allow": ["slack", "openrouter"],
+    "slots": { "memory": "none" },
+    "entries": {
+      "slack": { "enabled": true },
+      "openrouter": { "enabled": true },
+      "memory-core": {
+        "enabled": false,
+        "config": { "dreaming": { "enabled": false } }
+      }
+    }
+  },
+  "tools": {
+    "allow": ["message", "automations"],
+    "elevated": { "enabled": false },
+    "exec": { "security": "deny" },
+    "gatewayPolicy": {
+      "allow": ["message", "automations"],
+      "actions": {
+        "message": ["send", "read", "edit", "delete", "react", "reactions"],
+        "automations": [
+          "status", "list", "get", "add", "update", "remove",
+          "run", "runs", "next_check", "scratch_get", "scratch_set", "record_result"
+        ]
+      },
+      "automations": { "scope": "caller", "allowCommandJobs": false }
+    }
+  },
+  "commands": {
+    "native": false,
+    "nativeSkills": false,
+    "text": false,
+    "bash": false,
+    "config": false,
+    "debug": false,
+    "restart": false
+  },
+  "browser": { "enabled": false },
+  "cron": { "enabled": true, "triggers": { "enabled": false } }
+}

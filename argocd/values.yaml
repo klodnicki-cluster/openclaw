@@ -1,0 +1,4 @@
+runtime:
+  repoURL: https://github.com/klodnicki-cluster/openclaw.git
+  targetRevision: HEAD
+  path: runtime
