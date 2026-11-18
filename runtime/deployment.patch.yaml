@@ -6,7 +6,7 @@ spec:
   template:
     spec:
       # Make sure the permissions on the volume are OK
-      initContainer:
+      initContainers:
         - name: fix-permissions
           image: busybox:1.38
           imagePullPolicy: IfNotPresent
