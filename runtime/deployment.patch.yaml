@@ -9,7 +9,6 @@ spec:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         runAsUser: 1000
-        runAsNonRoot: true
       # Make sure the permissions on the volume are OK
       initContainers:
         - name: fix-permissions
