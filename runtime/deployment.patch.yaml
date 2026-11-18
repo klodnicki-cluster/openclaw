@@ -30,7 +30,6 @@ spec:
           securityContext:
             runAsUser: 0
             runAsGroup: 0
-            readOnlyRootFilesystem: false # so that npm works
           resources:
             requests:
               memory: 32Mi
@@ -49,6 +48,7 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
+            readOnlyRootFilesystem: false # so that npm works
           env:
             - name: ANTHROPIC_API_KEY
               $patch: delete
