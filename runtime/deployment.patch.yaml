@@ -26,7 +26,7 @@ spec:
               find /home/node/.openclaw -type d -exec chmod 700 {} +
               find /home/node/.openclaw -type f -exec chmod 600 {} +
 
-              mkdir -p /tmp-volume/gateway-tmp && chmod 1777 /tmp-volume/gateway-tmp
+              mkdir -p /tmp-volume/gateway-tmp && chmod 1777 /tmp-volume/gateway-tmp && chown 1000:1000 /tmp-volume/gateway-tmp
           securityContext:
             runAsUser: 0
             runAsGroup: 0
