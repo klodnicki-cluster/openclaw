@@ -1,10 +1,10 @@
 {
   "display_information": {
-    "name": "OpenClaw",
+    "name": "Ghost",
     "description": "Workspace messaging assistant"
   },
   "features": {
-    "bot_user": { "display_name": "OpenClaw", "always_online": true },
+    "bot_user": { "display_name": "Ghost", "always_online": true },
     "app_home": {
       "home_tab_enabled": false,
       "messages_tab_enabled": true,

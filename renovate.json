@@ -12,13 +12,6 @@
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^runtime/plugin\\.json$/"],
-      "matchStrings": ["\"name\":\\s*\"(?<depName>@openclaw/slack)\",\\s*\"version\":\\s*\"(?<currentValue>[^\"]+)\""],
-      "datasourceTemplate": "npm",
-      "versioningTemplate": "semver"
-    },
-    {
-      "customType": "regex",
       "managerFilePatterns": ["/^\\.github/tools\\.env$/"],
       "matchStrings": ["# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+[A-Z_]+_VERSION=(?<currentValue>[^\\s]+)"],
       "versioningTemplate": "semver"

@@ -6,74 +6,9 @@ spec:
   template:
     spec:
       terminationGracePeriodSeconds: 120
-      initContainers:
-        - name: init-config
-          # Resolved and pinned by the shared Kustomize images override.
-          image: ghcr.io/openclaw/openclaw
-          command: [node, /bootstrap/bootstrap.mjs]
-          env:
-            - name: HOME
-              value: /home/node
-            - name: OPENCLAW_STATE_DIR
-              value: /home/node/.openclaw
-            - name: OPENCLAW_CONFIG_PATH
-              value: /home/node/.openclaw/openclaw.json
-            - name: XDG_CACHE_HOME
-              value: /home/node/.openclaw/.cache
-            - name: OPENCLAW_GATEWAY_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: openclaw-secrets
-                  key: OPENCLAW_GATEWAY_TOKEN
-            - name: OPENROUTER_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: openclaw-secrets
-                  key: OPENROUTER_API_KEY
-            - name: SLACK_APP_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: openclaw-secrets
-                  key: SLACK_APP_TOKEN
-            - name: SLACK_BOT_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: openclaw-secrets
-                  key: SLACK_BOT_TOKEN
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: [ALL]
-          resources:
-            requests:
-              cpu: 250m
-              memory: 512Mi
-            limits:
-              cpu: "1"
-              memory: 2Gi
-          volumeMounts:
-            - name: config
-              mountPath: /config
-              readOnly: true
-            - name: bootstrap
-              mountPath: /bootstrap
-              readOnly: true
-            - name: tmp-volume
-              mountPath: /tmp
       containers:
         - name: gateway
-          # Null removes upstream's command override, preserving image activation.
-          command: null
-          args: [node, openclaw.mjs, gateway, run]
           env:
-            - name: OPENCLAW_STATE_DIR
-              value: /home/node/.openclaw
-            - name: OPENCLAW_CONFIG_PATH
-              value: /home/node/.openclaw/openclaw.json
             - name: ANTHROPIC_API_KEY
               $patch: delete
             - name: OPENAI_API_KEY
@@ -85,7 +20,6 @@ spec:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: OPENROUTER_API_KEY
-                  optional: false
             - name: SLACK_APP_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -96,34 +30,3 @@ spec:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: SLACK_BOT_TOKEN
-          startupProbe:
-            exec:
-              command:
-                - node
-                - -e
-                - &startup >-
-                  require('http').get('http://127.0.0.1:18789/startupz', r => {
-                  let b = ''; r.on('data', d => b += d); r.on('end', () => {
-                  try { const j = JSON.parse(b); process.exit(r.statusCode === 200 && j.ok === true && j.status === 'started' ? 0 : 1); }
-                  catch { process.exit(1); } }); }).on('error', () => process.exit(1))
-            failureThreshold: 60
-          readinessProbe:
-            exec:
-              command: [node, -e, *startup]
-          livenessProbe:
-            exec:
-              command:
-                - node
-                - -e
-                - >-
-                  require('http').get('http://127.0.0.1:18789/healthz', r => {
-                  let b = ''; r.on('data', d => b += d); r.on('end', () => {
-                  try { process.exit(r.statusCode === 200 && JSON.parse(b).ok === true ? 0 : 1); }
-                  catch { process.exit(1); } }); }).on('error', () => process.exit(1))
-      volumes:
-        - name: config
-          configMap:
-            name: openclaw-config-git
-        - name: bootstrap
-          configMap:
-            name: openclaw-bootstrap
