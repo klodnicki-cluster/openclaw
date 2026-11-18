@@ -15,14 +15,8 @@ spec:
             - -c
             - |
               set -eu
+              chmod -R -t /home/node/.openclaw
               chown 1000:1000 /home/node/.openclaw
-              chmod 700 /home/node/.openclaw
-              mkdir -p /home/node/.openclaw/credentials
-              chown 1000:1000 /home/node/.openclaw/credentials
-              chmod 700 /home/node/.openclaw/credentials
-              mkdir -p /home/node/.openclaw/client
-              chown 1000:1000 /home/node/.openclaw/client
-              chmod 700 /home/node/.openclaw/client
               mkdir -p /tmp-volume/gateway-tmp && chmod 1777 /tmp-volume/gateway-tmp
           securityContext:
             runAsUser: 0
