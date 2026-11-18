@@ -7,7 +7,9 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
         runAsUser: 1000
+        runAsNonRoot: true
       # Make sure the permissions on the volume are OK
       initContainers:
         - name: fix-permissions
@@ -18,8 +20,13 @@ spec:
             - -c
             - |
               set -eu
-              chmod -R -t /home/node/.openclaw
-              chown 1000:1000 /home/node/.openclaw
+              mkdir -p /home/node/.openclaw/client
+              chown -R 1000:1000 /home/node/.openclaw
+              chmod 700 /home/node/.openclaw
+              chmod 700 /home/node/.openclaw/client
+              find /home/node/.openclaw -type d -exec chmod 700 {} +
+              find /home/node/.openclaw -type f -exec chmod 600 {} +
+
               mkdir -p /tmp-volume/gateway-tmp && chmod 1777 /tmp-volume/gateway-tmp
           securityContext:
             runAsUser: 0
