@@ -30,7 +30,7 @@ spec:
           securityContext:
             runAsUser: 0
             runAsGroup: 0
-            readOnlyFilesystem: false # so that npm works
+            readOnlyRootFilesystem: false # so that npm works
           resources:
             requests:
               memory: 32Mi
