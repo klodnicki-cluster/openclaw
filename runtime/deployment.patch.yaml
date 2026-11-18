@@ -5,6 +5,9 @@ metadata:
 spec:
   template:
     spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
       # Make sure the permissions on the volume are OK
       initContainers:
         - name: fix-permissions
@@ -39,8 +42,6 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
-            fsGroup: 1000
-            fsGroupChangePolicy: "OnRootMismatch"
           env:
             - name: ANTHROPIC_API_KEY
               $patch: delete
