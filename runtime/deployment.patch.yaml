@@ -86,7 +86,7 @@ spec:
           env:
             # renovate: datasource=github-releases depName=openclaw/gogcli
             - name: GOG_VERSION
-              value: "0.48.0"
+              value: "0.48.1"
           resources:
             requests:
               memory: 32Mi
