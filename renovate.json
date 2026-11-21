@@ -15,6 +15,12 @@
       "managerFilePatterns": ["/^\\.github/tools\\.env$/"],
       "matchStrings": ["# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+[A-Z_]+_VERSION=(?<currentValue>[^\\s]+)"],
       "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^runtime\\/deployment\\.patch\\.yaml$/"],
+      "matchStrings": ["# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+- name: GOG_VERSION\\s+value: \"(?<currentValue>[^\\\"]+)\""],
+      "versioningTemplate": "semver"
     }
   ],
   "packageRules": [

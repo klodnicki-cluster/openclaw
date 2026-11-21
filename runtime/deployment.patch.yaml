@@ -42,6 +42,61 @@ spec:
               mountPath: /home/node/.openclaw
             - name: tmp-volume
               mountPath: /tmp-volume
+        - name: install-gog
+          image: busybox:1.38
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              install_dir=/opt/utilities
+              binary="$install_dir/gog"
+              if [ -x "$binary" ]; then
+                installed_version="$("$binary" --version 2>&1)" || installed_version=""
+                if printf '%s\n' "$installed_version" | grep -Eq "(^|[^0-9])v?${GOG_VERSION}([^0-9]|$)"; then
+                  echo "gog $GOG_VERSION is already installed"
+                  exit 0
+                fi
+              fi
+
+              case "$(uname -m)" in
+                x86_64) arch=amd64 ;;
+                aarch64) arch=arm64 ;;
+                *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+              esac
+
+              asset="gogcli_${GOG_VERSION}_linux_${arch}.tar.gz"
+              release_url="https://github.com/openclaw/gogcli/releases/download/v${GOG_VERSION}"
+              mkdir -p "$install_dir"
+              tmp_dir="$(mktemp -d "$install_dir/.gog.XXXXXX")"
+              trap 'rm -rf "$tmp_dir"' EXIT
+              wget -qO "$tmp_dir/$asset" "$release_url/$asset"
+              wget -qO "$tmp_dir/checksums.txt" "$release_url/checksums.txt"
+              checksum_line="$(grep -E "^[[:xdigit:]]{64}  ${asset}\$" "$tmp_dir/checksums.txt")"
+              (
+                cd "$tmp_dir"
+                printf '%s\n' "$checksum_line" | sha256sum -c -
+              )
+              tar -xzf "$tmp_dir/$asset" -C "$tmp_dir" gog
+              chmod 755 "$tmp_dir/gog"
+              "$tmp_dir/gog" --version | grep -Eq "(^|[^0-9])v?${GOG_VERSION}([^0-9]|$)"
+              mv -f "$tmp_dir/gog" "$binary"
+              echo "Installed gog $GOG_VERSION"
+          env:
+            # renovate: datasource=github-releases depName=openclaw/gogcli
+            - name: GOG_VERSION
+              value: "0.48.0"
+          resources:
+            requests:
+              memory: 32Mi
+              cpu: 50m
+            limits:
+              memory: 128Mi
+              cpu: 250m
+          volumeMounts:
+            - name: utility-binaries
+              mountPath: /opt/utilities
       # Add just the secrets we need
       containers:
         - name: gateway
@@ -50,6 +105,8 @@ spec:
             runAsGroup: 1000
             readOnlyRootFilesystem: false # so that npm works
           env:
+            - name: PATH
+              value: /opt/utilities:/home/node/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             - name: ANTHROPIC_API_KEY
               $patch: delete
             - name: OPENAI_API_KEY
@@ -74,3 +131,10 @@ spec:
           resources:
             limits:
               memory: 4Gi
+          volumeMounts:
+            - name: utility-binaries
+              mountPath: /opt/utilities
+      volumes:
+        - name: utility-binaries
+          persistentVolumeClaim:
+            claimName: openclaw-utilities-pvc
