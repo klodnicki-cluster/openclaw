@@ -106,7 +106,7 @@ spec:
             readOnlyRootFilesystem: false # so that npm works
           env:
             - name: PATH
-              value: /opt/utilities:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+              value: /opt/utilities:/home/node/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             - name: ANTHROPIC_API_KEY
               $patch: delete
             - name: OPENAI_API_KEY
