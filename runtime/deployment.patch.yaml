@@ -78,7 +78,7 @@ spec:
                 cd "$tmp_dir"
                 printf '%s\n' "$checksum_line" | sha256sum -c -
               )
-              tar -xzf "$tmp_dir/$asset" -C "$tmp_dir" gog
+              tar -xzf "$tmp_dir/$asset" -C "$tmp_dir" ./gog
               chmod 755 "$tmp_dir/gog"
               "$tmp_dir/gog" --version | grep -Eq "(^|[^0-9])v?${GOG_VERSION}([^0-9]|$)"
               mv -f "$tmp_dir/gog" "$binary"
