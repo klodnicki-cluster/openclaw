@@ -50,7 +50,7 @@ spec:
             - -c
             - |
               set -eu
-              install_dir=/opt/utilities
+              install_dir=/opt/utilities/bin
               binary="$install_dir/gog"
               if [ -x "$binary" ]; then
                 installed_version="$("$binary" --version 2>&1)" || installed_version=""
@@ -106,7 +106,7 @@ spec:
             readOnlyRootFilesystem: false # so that npm works
           env:
             - name: PATH
-              value: /opt/utilities:/home/node/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+              value: /opt/utilities/bin:/home/node/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
             - name: ANTHROPIC_API_KEY
               $patch: delete
             - name: OPENAI_API_KEY
@@ -128,6 +128,15 @@ spec:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: SLACK_BOT_TOKEN
+            - name: GOG_HOME
+              value: /opt/utilities/gog
+            - name: GOG_KEYRING_BACKEND
+              value: file
+            - name: GOG_KEYRING_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gogcli-secret
+                  key: keyring-password
           resources:
             limits:
               memory: 4Gi
