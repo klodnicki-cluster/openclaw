@@ -137,6 +137,8 @@ spec:
                 secretKeyRef:
                   name: gogcli-secret
                   key: keyring-password
+            - name: GOG_READONLY
+              value: '1'
           resources:
             limits:
               memory: 4Gi
