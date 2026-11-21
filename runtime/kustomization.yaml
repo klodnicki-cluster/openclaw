@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: openclaw
 resources:
   - github.com/openclaw/openclaw//scripts/k8s/manifests?ref=v2026.11.5&timeout=180s
+  - gog-pvc.yaml
 images:
   - name: ghcr.io/openclaw/openclaw
     newTag: 2026.11.5-slim@sha256:9c74476e3e79b5a1595fd5cf904286eaba3471c10c640aaa9a361a89b41d0882
