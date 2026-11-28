@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: openclaw
 resources:
-  - github.com/openclaw/openclaw//scripts/k8s/manifests?ref=v2026.11.5&timeout=180s
+  - github.com/openclaw/openclaw//scripts/k8s/manifests?ref=v2026.11.10&timeout=180s
   - gog-pvc.yaml
 images:
   - name: ghcr.io/openclaw/openclaw
